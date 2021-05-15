@@ -12,6 +12,8 @@ from bottle.graphics let Sprite
 global player-sprite : Sprite
 global player-dir : i32
 global player-position : vec2
+global anim-counter : f64
+global anim-frame : i32
 
 @@ 'on bottle.load
 fn ()
@@ -43,7 +45,12 @@ fn (dt)
         dir += (vec2 0 -1)
 
     if (dir != 0)
+        anim-counter += dt
+        if (anim-counter > 0.25)
+            anim-counter = 1.0 % dt
+            anim-frame += 1
         dir = (normalize dir)
+        
     player-position += dir * 150 * (dt as f32)
 
 @@ 'on bottle.draw
@@ -52,6 +59,6 @@ fn ()
     column := player-fdirs @ player-dir
     bottle.graphics.sprite player-sprite player-position
         scale = (vec2 4 4)
-        quad = (pick-sprite player-sprite 4 7 column 0)
+        quad = (pick-sprite player-sprite 4 7 column (anim-frame % 4))
 
 bottle.run;
